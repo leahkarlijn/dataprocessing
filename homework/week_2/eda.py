@@ -24,7 +24,6 @@ def histo(dataframe):
     plt.xlabel('GDP (dollars)')
     plt.ylabel('std')
     plt.title('GPD histo')
-    plt.show()
 
 def boxplot(dataframe):
     IM_list = []
@@ -50,10 +49,17 @@ def boxplot(dataframe):
     box_list.append(maximum)
 
     plt.boxplot(box_list)
-    plt.show()
+
+def json(dataframe):
+    df2 = df[['Country', 'Region', 'Pop. Density (per sq. mi.)', GDP, IM]]
+    outfile = open('Final.json','w')
+    outfile.write(df2.to_json(orient='index'))
+    print(outfile)
+    outfile.close()
 
 if __name__ == '__main__':
     df = clean()
     std = get_std(df)
     histo = histo(df)
     box = boxplot(df)
+    json = json(df)

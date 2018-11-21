@@ -8,37 +8,168 @@
 </head>
 <body>
 
-<canvas id="canvas"></canvas>
+<canvas id="myCanvas" width="1198" height="500" style="border:1px solid #000000;"></canvas>
+<canvas id="info" width="2000" height="200" ></canvas>
+
 <script>
+
 var fileName = "KNMI.json";
 var txtFile = new XMLHttpRequest();
 txtFile.onreadystatechange = function() {
     if (txtFile.readyState === 4 && txtFile.status == 200) {
         //console.log(JSON.parse(txtFile.responseText));
         data = JSON.parse(txtFile.responseText);
-        oefenen(data)
+        med = information(data); // get data
+        domain = min_max(med);  // calculate domain gemiddelde temperatuur
+        range = [0, 400]; // determine range based on canvas height
+        trans = ab(domain, range); // calculate alpha and beta
+        dict = make_dict(med, trans, data);  // make dict with coordinates
+        make_graph(dict)
+        ax()
+        info2()
     }
 }
 txtFile.open("GET", fileName);
 txtFile.send();
 
-function oefenen(data){
+function information(data){
+  keys = Object.keys(data); // list met alle keys
 
-keys = Object.keys(data); // list met alle keys
+  var med = []; // list gemiddelde temperatuur
+  var max = []; // list max temperatuur
+  var min = []; // list min temperatuur
 
-var med = []; // list gemiddelde temperatuur
-var max = []; // list max temperatuur
-var min = []; // list min temperatuur
-
-keys.forEach(function info(dag) { // kijk voor elke dag naar de med, max en min en push deze in hun eigen lijst
-  med.push(data[dag]["med_t"]);
-  max.push(data[dag]["max_t"]);
-  min.push(data[dag]["min_t"]);
-})
-console.log(med);
-console.log(max);
-console.log(min);
+  // kijk voor elke dag naar de med, max en min en push deze in hun eigen lijst
+  keys.forEach(function info(dag) {
+    med.push(data[dag]["med_t"]);
+    max.push(data[dag]["max_t"]);
+    min.push(data[dag]["min_t"]);
+  })
+  return med;
 }
+
+function min_max(med){
+  var domain = [];
+  var min = Math.min.apply(null, med); // minimum domain
+  var max = Math.max.apply(null, med); // maximum domain
+  domain.push(min)
+  domain.push(max)
+  console.log(domain)
+  return domain;
+}
+
+function ab(domain, range){
+  trans = [];
+  var alpha = (range[1] - range[0]) / (domain[1] - domain[0]);
+  var beta = range[1] - alpha * domain[1];
+  trans.push(alpha)
+  trans.push(beta)
+  // return list consisting of alpha and beta
+  console.log(trans)
+  return trans;
+}
+
+// creates dict with coordinates for line graph
+function make_dict(med, trans, data){
+  var pairs = [];
+  for (var i = 0; i < 366; i++) {
+    pairs.push({
+    key:   (i*3)+50, // times three to fit graph
+    value: ((400-(trans[0]*med[i]+trans[1]))+50) // transform function
+    // 400 - because the y axis is upside down while using canvas
+  })
+  }
+  return pairs;
+}
+
+// creates graph using canvas
+function make_graph(pairs){
+  var c = document.getElementById("myCanvas");
+  var ctx = c.getContext("2d");
+
+  ctx.moveTo(pairs[0]["key"], pairs[0]["value"]);
+
+  pairs.forEach(function(pair){
+    ctx.lineTo(pair["key"], pair["value"]);
+    ctx.moveTo(pair["key"], pair["value"]);
+  })
+  ctx.stroke();
+}
+
+function ax(){
+  var canvas = document.getElementById("myCanvas");
+  var ctx = canvas.getContext("2d");
+  ctx.font = "20px Comic Sans MS";
+  ctx.fillText("month",50,500);
+  ctx.fillText("temperature",0,20)
+  ctx.fillText("median temperature in De Bilt in 2016", 450, 20)
+  ctx.fillText("jan",50, 480)
+  ctx.fillText("feb",145, 480)
+  ctx.fillText("mar",240, 480)
+  ctx.fillText("apr",335, 480)
+  ctx.fillText("may",430, 480)
+  ctx.fillText("jun",530, 480)
+  ctx.fillText("jul",625, 480)
+  ctx.fillText("aug",720, 480)
+  ctx.fillText("sep",815, 480)
+  ctx.fillText("oct",910, 480)
+  ctx.fillText("nov",1005, 480)
+  ctx.fillText("dec",1100, 480)
+
+  ctx.fillText("25 cel", 5,50)
+  ctx.beginPath();
+  ctx.moveTo(0,50);
+  ctx.lineTo(1400,50);
+  ctx.stroke();
+
+  ctx.fillText("20 cel", 5,117.6)
+  ctx.beginPath();
+  ctx.moveTo(0,117.6);
+  ctx.lineTo(1400,117.6);
+  ctx.stroke();
+
+  ctx.fillText("15 cel", 5,185.2)
+  ctx.beginPath();
+  ctx.moveTo(0,185.2);
+  ctx.lineTo(1400,185.2);
+  ctx.stroke();
+
+  ctx.fillText("10 cel", 5,252.8)
+  ctx.beginPath();
+  ctx.moveTo(0,252.8);
+  ctx.lineTo(1400,252.8);
+  ctx.stroke();
+
+  ctx.fillText("5 cel", 5,320.5)
+  ctx.beginPath();
+  ctx.moveTo(0,320.5);
+  ctx.lineTo(1400,320.5);
+  ctx.stroke();
+
+  ctx.fillText("0 cel", 5,388.1)
+  ctx.beginPath();
+  ctx.moveTo(0,388.1);
+  ctx.lineTo(1400,388.1);
+  ctx.stroke();
+
+  ctx.fillText("-5 cel", 5,456)
+  ctx.beginPath();
+  ctx.moveTo(0,456);
+  ctx.lineTo(1400,456);
+  ctx.stroke();
+}
+
+function info2(){
+  var canvas = document.getElementById("info");
+  var ctx = canvas.getContext("2d");
+  ctx.font = "25px Comic Sans MS";
+  ctx.fillText("Leah van Oorschot", 10,50);
+  ctx.fillText("JavaScript", 10,75);
+  ctx.font = "20px Comic Sans MS"
+  ctx.fillText("http://www.knmi.nl/kennis-en-datacentrum/achtergrond/centraal-nederland-temperatuur-cnt", 10,100)
+}
+
+
 
 </script>
 </body>

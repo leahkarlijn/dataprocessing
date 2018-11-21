@@ -96,6 +96,7 @@ function make_graph(pairs){
   ctx.stroke();
 }
 
+// adds axes to graph
 function ax(){
   var canvas = document.getElementById("myCanvas");
   var ctx = canvas.getContext("2d");
@@ -116,6 +117,7 @@ function ax(){
   ctx.fillText("nov",1005, 480)
   ctx.fillText("dec",1100, 480)
 
+  // coordinates for degree and line were calculated by hand
   ctx.fillText("25 cel", 5,50)
   ctx.beginPath();
   ctx.moveTo(0,50);
@@ -159,6 +161,7 @@ function ax(){
   ctx.stroke();
 }
 
+// info about student and data used
 function info2(){
   var canvas = document.getElementById("info");
   var ctx = canvas.getContext("2d");

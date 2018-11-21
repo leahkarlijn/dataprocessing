@@ -14,12 +14,31 @@ var fileName = "KNMI.json";
 var txtFile = new XMLHttpRequest();
 txtFile.onreadystatechange = function() {
     if (txtFile.readyState === 4 && txtFile.status == 200) {
-        console.log(JSON.parse(txtFile.responseText));
+        //console.log(JSON.parse(txtFile.responseText));
+        data = JSON.parse(txtFile.responseText);
+        oefenen(data)
     }
 }
 txtFile.open("GET", fileName);
 txtFile.send();
 
+function oefenen(data){
+
+keys = Object.keys(data); // list met alle keys
+
+var med = []; // list gemiddelde temperatuur
+var max = []; // list max temperatuur
+var min = []; // list min temperatuur
+
+keys.forEach(function info(dag) { // kijk voor elke dag naar de med, max en min en push deze in hun eigen lijst
+  med.push(data[dag]["med_t"]);
+  max.push(data[dag]["max_t"]);
+  min.push(data[dag]["min_t"]);
+})
+console.log(med);
+console.log(max);
+console.log(min);
+}
 
 </script>
 </body>

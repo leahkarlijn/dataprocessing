@@ -24,9 +24,9 @@ def CSV():
         dict = {}
         for line in rows:
             entry = {}
-            entry["MED_T"] = line[2]
-            entry["MIN_T"] = line[3]
-            entry["MAX_T"] = line[4]
+            entry["med_t"] = line[2]
+            entry["min_t"] = line[3]
+            entry["max_t"] = line[4]
             dict[line[1]] = entry
         return(dict)
 

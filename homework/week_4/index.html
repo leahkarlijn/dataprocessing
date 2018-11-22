@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>chopsticks</title>
+        <script type="text/javascript" src="d3/d3.js"></script>
+    </head>
+    <body>
+        <script type="text/javascript">
+            var body = d3.select("body");
+            var p = body.append("p");
+            var p1 = body.append("p1");
+            var p2 = body.append("p2");
+            p.text("chopstickstack");
+            p1.text("leah van oorschot, 12238848")
+            p2.text("This dataset shows how the lengths of a pair of chopsticks influences the amount of peanuts a person can pick up from a plate and transfer to a cup")
+
+            d3.csv("chopstick-effectiveness.csv", function(data) {
+                console.log(data)
+                //   data.forEach(function(Object) {
+                //   console.log(Ojbect);
+                // });
+
+            });
+
+            // function information(data){
+            //   keys = Object.keys(data); // list met alle keys
+            //   console.log(keys)
+            //
+            //   var food = [];
+            //   var individual = [];
+            //   var chopsticks = [];
+            //
+            //   keys.forEach(function info(dag) {
+            //     food.push(data[dag]["Food"]);
+            //     individual.push(data[dag]["Individual"]);
+            //     chopsticks.push(data[dag]["Chopstick"]);
+            //   })
+            // }
+        </script>
+    </body>
+</html>

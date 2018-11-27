@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="en">
     <head>
         <meta charset="utf-8">
@@ -12,26 +13,45 @@
             var p = body.append("p").text("chopstickstack");
             var p1 = body.append("p").text("leah van oorschot, 12238848");
             var p2 = body.append("p").text("This dataset shows how the lengths of a pair of chopsticks influences the amount of peanuts a person can pick up from a plate and transfer to a cup");
-            var h = 300
+            var h = 300;
+            var w = 500;
+            var margin = {
+                          top: 20,
+                          left: 50,
+                          right: 30,
+                          bottom: 30
+                      };
+            var barwidth = 80
+            var padding = 5
             var svg = d3.select("body")
-            .append("svg")
-            .attr("width", 1000)
-            .attr("height", h);
-
+                        .append("svg")
+                        .attr("width", w)
+                        .attr("height", h)
+                        .attr("transform", "translate(" + margin.top + "," + margin.left + ")");
+            w_domain = w - margin.left - margin.right;
+            h_domain = h - margin.top - margin.bottom;
+            var yscale = d3.scaleLinear()
+                .range([h_domain, 0])
+                .domain([0, 35]);
+            var xscale = d3.scaleBand()
+                .range([0, w_domain])
+                .padding(0.1);
             var fileName = "data.json";
             var txtFile = new XMLHttpRequest();
             txtFile.onreadystatechange = function() {
                 if (txtFile.readyState === 4 && txtFile.status == 200) {
                     data = (JSON.parse(txtFile.responseText));
                     data_array = information(data);
-                    //console.log(data_array)
+                    console.log(data_array)
                     dict = make_dict(data_array);
-                    poep = [22.5, 27, 30, 32.9, 25]
+                    // ik kreeg m'n data niet goed dus ik heb een array gemaakt gebasseerd op hoe m'n uiteindelijke data eruit zou zien
+                    used_data = [22.5, 27, 30, 32.9, 25]
                     // final_dict = final_dict(dict);
                     // calc_values(dict);
                     //show_data(data_array);
-                    make_bars(poep);
-                    make_axis(xAxis);
+                    make_bars(used_data);
+                    make_axis();
+                    make_labels(used_data);
                     // show_bars(data_array);
                 }
             }
@@ -68,34 +88,41 @@
     return(pairs)
     }
 
-
-  // function show_data(data_array){
-  //   d3.select("body").selectAll("p")
-  //     .data(data_array[0])
-  //     .enter()
-  //     .append("p")
-  //     .text(function(d) { return d; });
-  //     d3.select("body").selectAll("p")
-  //     .style("color", "hotpink");
-  //   }
-
     function make_bars(data){
     var rectangle = svg.selectAll("rect")
         .data(data)
         .enter()
         .append("rect");
 
-    rectangle.attr("x", function(d, i){
-                    return (i*(500/((data).length)))})
-              .attr("y", function(d) {
-                    return h - (d*5);})
-              .attr("height", function(d){
-                  var barheight = d*5
+    rectangle.attr("y", function(d) {
+                    return h_domain - (d*5);}) // height - data value
+              .attr("height", function(d) {
+                  var barheight = d*5;
                   return (barheight)})
-              .attr("width", 40)
+              .attr("width", barwidth - padding)
+              .attr("transform", function (d,i){
+                var translate = [barwidth * i, 0];
+                return "translate(" + translate + ")";
+              })
               .attr("fill", function(d) {
-                  return "rgb(229, 156, " + (d * 6) + ")";});
+                  return "rgb(229, 156, " + (d * 6) + ")";
+                });
 
+    }
+
+    function make_axis(){
+      var xaxis = d3.axisBottom(xscale);
+
+      var yaxis = d3.axisLeft(yscale);
+
+      svg.append('g')
+          .attr('transform', 'translate('+[0, h_domain]+')')
+          .attr('class', 'x axis')
+          .call(xaxis);
+
+      svg.append('g')
+          .attr('class', 'y axis')
+          .call(yaxis);
     }
 
 

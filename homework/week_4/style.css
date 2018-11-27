@@ -1,0 +1,23 @@
+div.bar {
+    display: inline-block;
+    width: 20px;
+    height: 75px;
+    background-color: pink;
+}
+body {
+    background-color: #ffff;
+    color: black;
+}
+
+h1 {
+  font-family: verdana;
+  font-size: 26px;
+  color: #310072
+}
+
+p {
+    font-size: 18px;
+    line-height: 15px;
+    color: #d39ae2;
+    font-family: Garamond;
+}

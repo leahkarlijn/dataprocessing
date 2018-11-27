@@ -2,41 +2,103 @@
 <html lang="en">
     <head>
         <meta charset="utf-8">
+        <link rel="stylesheet" href="style.css">
         <title>chopsticks</title>
         <script type="text/javascript" src="d3/d3.js"></script>
     </head>
     <body>
         <script type="text/javascript">
             var body = d3.select("body");
-            var p = body.append("p");
-            var p1 = body.append("p1");
-            var p2 = body.append("p2");
-            p.text("chopstickstack");
-            p1.text("leah van oorschot, 12238848")
-            p2.text("This dataset shows how the lengths of a pair of chopsticks influences the amount of peanuts a person can pick up from a plate and transfer to a cup")
+            var p = body.append("p").text("chopstickstack");
+            var p1 = body.append("p").text("leah van oorschot, 12238848");
+            var p2 = body.append("p").text("This dataset shows how the lengths of a pair of chopsticks influences the amount of peanuts a person can pick up from a plate and transfer to a cup");
+            var h = 300
+            var svg = d3.select("body")
+            .append("svg")
+            .attr("width", 1000)
+            .attr("height", h);
 
-            d3.csv("chopstick-effectiveness.csv", function(data) {
-                console.log(data)
-                //   data.forEach(function(Object) {
-                //   console.log(Ojbect);
-                // });
+            var fileName = "data.json";
+            var txtFile = new XMLHttpRequest();
+            txtFile.onreadystatechange = function() {
+                if (txtFile.readyState === 4 && txtFile.status == 200) {
+                    data = (JSON.parse(txtFile.responseText));
+                    data_array = information(data);
+                    //console.log(data_array)
+                    dict = make_dict(data_array);
+                    poep = [22.5, 27, 30, 32.9, 25]
+                    // final_dict = final_dict(dict);
+                    // calc_values(dict);
+                    //show_data(data_array);
+                    make_bars(poep);
+                    make_axis(xAxis);
+                    // show_bars(data_array);
+                }
+            }
+            txtFile.open("GET", fileName);
+            txtFile.send();
 
-            });
+    function information(data){
+      keys = Object.keys(data); // list met alle keys
 
-            // function information(data){
-            //   keys = Object.keys(data); // list met alle keys
-            //   console.log(keys)
-            //
-            //   var food = [];
-            //   var individual = [];
-            //   var chopsticks = [];
-            //
-            //   keys.forEach(function info(dag) {
-            //     food.push(data[dag]["Food"]);
-            //     individual.push(data[dag]["Individual"]);
-            //     chopsticks.push(data[dag]["Chopstick"]);
-            //   })
-            // }
+      var data_array = [];
+      var food = [];
+      var individual = [];
+      var chopsticks = [];
+
+      keys.forEach(function info(dag) {
+        food.push(data[dag]["Food"]);
+        individual.push(data[dag]["Individual"]);
+        chopsticks.push(data[dag]["Chopstick"]);
+      })
+      data_array.push(food)
+      data_array.push(individual)
+      data_array.push(chopsticks)
+      return data_array
+    }
+
+    function make_dict(data_array){
+      var pairs = [];
+      for (var i = 0; i < 184; i++) {
+        pairs.push({
+        key:   data_array[2][i],
+        value: (data_array[0][i])
+      })
+    }
+    return(pairs)
+    }
+
+
+  // function show_data(data_array){
+  //   d3.select("body").selectAll("p")
+  //     .data(data_array[0])
+  //     .enter()
+  //     .append("p")
+  //     .text(function(d) { return d; });
+  //     d3.select("body").selectAll("p")
+  //     .style("color", "hotpink");
+  //   }
+
+    function make_bars(data){
+    var rectangle = svg.selectAll("rect")
+        .data(data)
+        .enter()
+        .append("rect");
+
+    rectangle.attr("x", function(d, i){
+                    return (i*(500/((data).length)))})
+              .attr("y", function(d) {
+                    return h - (d*5);})
+              .attr("height", function(d){
+                  var barheight = d*5
+                  return (barheight)})
+              .attr("width", 40)
+              .attr("fill", function(d) {
+                  return "rgb(229, 156, " + (d * 6) + ")";});
+
+    }
+
+
         </script>
     </body>
 </html>
